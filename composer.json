@@ -21,7 +21,8 @@
         "sabre/event": "^5.0",
         "sabre/uri": "^2.0",
         "webmozart/glob": "^4.1",
-        "webmozart/path-util": "^2.3"
+        "webmozart/path-util": "^2.3",
+        "felixfbecker/language-server": "^5.3"
     },
     "bin": ["psalm", "psalter"],
     "autoload": {
