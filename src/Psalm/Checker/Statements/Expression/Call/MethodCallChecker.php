@@ -576,6 +576,10 @@ class MethodCallChecker extends \Psalm\Checker\Statements\Expression\CallChecker
                         $self_fq_class_name
                     );
 
+                    if ($codebase->server_mode && $method_id) {
+                        $codebase->addNodeReference($statements_checker->getFilePath(), $stmt->name, $method_id);
+                    }
+
                     if (isset($stmt->inferredType)) {
                         $return_type_candidate = $stmt->inferredType;
                     }
@@ -747,8 +751,6 @@ class MethodCallChecker extends \Psalm\Checker\Statements\Expression\CallChecker
 
                 $stmt->inferredType->by_ref = $returns_by_ref;
             }
-
-            $stmt->name->inferredType = $return_type;
         }
 
         if ($method_id === null) {
