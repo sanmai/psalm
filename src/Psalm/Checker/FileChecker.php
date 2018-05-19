@@ -130,6 +130,8 @@ class FileChecker extends SourceChecker implements StatementsSource
         if (!$preserve_checkers) {
             $this->class_checkers_to_analyze = [];
         }
+
+        \Psalm\Type\Algebra::clearCache();
     }
 
     /**

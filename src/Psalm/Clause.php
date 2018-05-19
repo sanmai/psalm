@@ -82,23 +82,47 @@ class Clause
     /**
      * Gets a hash of the object – will be unique if we're unable to easily reconcile this with others
      *
+     * @param bool $unique
+     *
      * @return string
      */
-    public function getHash()
+    public function getHash($unique = false)
     {
-        ksort($this->possibilities);
+        $possibility_string = '[]';
 
-        foreach ($this->possibilities as &$possible_types) {
-            sort($possible_types);
+        if ($this->possibilities) {
+            $possibilities = $this->possibilities;
+            ksort($possibilities);
+
+            foreach ($possibilities as &$possible_types) {
+                sort($possible_types);
+            }
+
+            $possibility_string = json_encode($possibilities);
+
+            if (!$possibility_string) {
+                throw new \LogicException('Error converting possibilities to json');
+            }
         }
 
-        $possibility_string = json_encode($this->possibilities);
-        if (!$possibility_string) {
-            throw new \LogicException('Error converting possibilities to json');
+        if (!$unique) {
+            $object_id = '';
+
+            if ($this->wedge || !$this->reconcilable) {
+                if (function_exists('spl_object_id')) {
+                    $object_id = spl_object_id($this);
+                } else {
+                    $object_id = spl_object_hash($this);
+                }
+            }
+
+            return md5($possibility_string) . $object_id;
         }
 
-        return md5($possibility_string) .
-            ($this->wedge || !$this->reconcilable ? spl_object_hash($this) : '');
+        return md5($possibility_string)
+            . ($this->wedge ? '.w' : '')
+            . ($this->reconcilable ? '.r' : '')
+            . ($this->generated ? '.g' : '');
     }
 
     public function __toString()
@@ -140,5 +164,23 @@ class Clause
                 array_values($this->possibilities)
             )
         );
+    }
+
+    /**
+     * @param  array<self>  $clauses
+     *
+     * @return string
+     */
+    public static function getCacheKeyForClauses(array $clauses)
+    {
+        $hashes = [];
+
+        foreach ($clauses as $clause) {
+            $hashes[] = $clause->getHash(true);
+        }
+
+        sort($hashes);
+
+        return implode('.', $hashes);
     }
 }

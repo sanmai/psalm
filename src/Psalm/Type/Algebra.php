@@ -12,6 +12,11 @@ use Psalm\Type\Algebra;
 class Algebra
 {
     /**
+     * @var array<string, array<int, Clause>>
+     */
+    private static $negation_cache = [];
+
+    /**
      * @param  array<string, string>  $types
      *
      * @return array<string, string>
@@ -347,7 +352,8 @@ class Algebra
      */
     private static function groupImpossibilities(array $clauses)
     {
-        if (count($clauses) > 5000) {
+        $clause_count = count($clauses);
+        if ($clause_count > 5000) {
             return [];
         }
 
@@ -355,7 +361,7 @@ class Algebra
 
         $new_clauses = [];
 
-        if ($clauses) {
+        if ($clause_count > 1) {
             $grouped_clauses = self::groupImpossibilities($clauses);
 
             if (count($grouped_clauses) > 5000) {
@@ -505,11 +511,18 @@ class Algebra
      */
     public static function negateFormula(array $clauses)
     {
+        $cache_key = Clause::getCacheKeyForClauses($clauses);
+        if (isset(self::$negation_cache[$cache_key])) {
+            return self::$negation_cache[$cache_key];
+        }
+
         foreach ($clauses as $clause) {
             self::calculateNegation($clause);
         }
 
         $negated = self::simplifyCNF(self::groupImpossibilities($clauses));
+
+        self::$negation_cache[$cache_key] = $negated;
         return $negated;
     }
 
@@ -545,5 +558,13 @@ class Algebra
         }
 
         $clause->impossibilities = $impossibilities;
+    }
+
+    /**
+     * @return void
+     */
+    public static function clearCache()
+    {
+        self::$negation_cache = [];
     }
 }
