@@ -46,7 +46,7 @@ jobs:
           name: Code Style Analysis with PHPCS
           command: vendor/bin/phpcs
   test:
-    executor: php-72
+    executor: php-74
     steps:
       - attach_workspace:
             at: /home/docker/project/
@@ -62,7 +62,7 @@ jobs:
           paths:
             - .
   coverage:
-    executor: php-72
+    executor: php-74
     steps:
       - attach_workspace:
           at: /home/docker/project/
