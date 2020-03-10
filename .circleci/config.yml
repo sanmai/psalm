@@ -90,7 +90,7 @@ jobs:
           command: composer require infection/infection:dev-master # Currently only master has https://github.com/infection/infection/pull/1106 merged.
       - run:
           name: Mutation coverage testing
-          command: php -d memory_limit=4G vendor/bin/infectio --coverage=build/phpunit --no-progress --only-covered --threads=2 || echo 'Temporarily ignoring unexplained infection failure'
+          command: php -d memory_limit=4G vendor/bin/infection --coverage=build/phpunit --no-progress --only-covered --threads=2 || echo 'Temporarily ignoring unexplained infection failure'
   phar-build:
     executor: php-72
     steps:
