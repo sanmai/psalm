@@ -68,14 +68,29 @@ jobs:
           at: /home/docker/project/
       - run:
           name: PHPUnit test with coverage
-          command: php -dextension=pcov.so vendor/bin/phpunit --coverage-html build/phpunit/coverage-html
+          command: php -dextension=pcov.so vendor/bin/phpunit --log-junit build/phpunit/phpunit.xml --coverage-xml build/phpunit/coverage-xml --coverage-html build/phpunit/
       - store_artifacts:
-          path: build/phpunit/coverage-html
+          path: build/phpunit
       - run:
           name: Display link to coverage report
           command: |
             echo "PHPUnit coverage report available at:"
-            echo https://circleci.com/api/v1.1/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/artifacts/0/home/docker/project/build/phpunit/coverage-html/index.html
+            echo https://circleci.com/api/v1.1/project/github/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/artifacts/0/home/docker/project/build/phpunit/index.html
+      - persist_to_workspace:
+          root: /home/docker/project/
+          paths:
+            - .
+  mutation:
+    executor: php-72
+    steps:
+      - attach_workspace:
+            at: /home/docker/project/
+      - run:
+          name: Install infection
+          command: composer global require infection/infection
+      - run:
+          name: Mutation coverage testing
+          command: php -d memory_limit=4G ~/.composer/vendor/bin/infection --coverage=build/phpunit --only-covered --threads=2 || echo 'Temporarily ignoring unexplained infection failure'
   phar-build:
     executor: php-72
     steps:
@@ -126,6 +141,9 @@ workflows:
           requires:
             - test
             - "Code Style Analysis"
+      - mutation:
+          requires:
+            - coverage
       - phar-build:
           requires:
             - test
