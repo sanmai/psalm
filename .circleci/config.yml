@@ -68,7 +68,7 @@ jobs:
           at: /home/docker/project/
       - run:
           name: PHPUnit test with coverage
-          command: php -dextension=pcov.so vendor/bin/phpunit --log-junit build/phpunit/phpunit.xml --coverage-xml build/phpunit/coverage-xml --coverage-html build/phpunit/
+          command: php -dextension=pcov.so vendor/bin/phpunit --log-junit build/phpunit/phpunit.xml --coverage-xml build/phpunit/coverage-xml --coverage-html build/phpunit/ --log-junit=build/phpunit/junit.xml
       - store_artifacts:
           path: build/phpunit
       - run:
