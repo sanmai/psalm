@@ -81,7 +81,7 @@ jobs:
           paths:
             - .
   mutation:
-    executor: php-72
+    executor: php-74
     steps:
       - attach_workspace:
             at: /home/docker/project/
