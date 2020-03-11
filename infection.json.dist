@@ -9,8 +9,8 @@
         "text": "build\/infection.log"
     },
     "mutators": {
-        "@removal": true,
+        "@zero_iteration": true,
         "@return_value": true,
-        "@zero_iteration": true
+        "@removal": true
     }
 }
