@@ -89,9 +89,6 @@ jobs:
           name: Install infection
           command: composer require infection/infection:dev-master # Currently only master has https://github.com/infection/infection/pull/1106 merged.
       - run:
-          name: Remove extra large coverage reports
-          command: find build/logs/coverage-xml -type f -size +100M -print -delete
-      - run:
           name: Mutation coverage testing
           command: php -d memory_limit=4G vendor/bin/infection --coverage=build/logs --only-covered --threads=2 --skip-initial-tests --no-progress 
   phar-build:
