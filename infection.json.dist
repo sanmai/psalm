@@ -1,5 +1,5 @@
 {
-    "timeout": 10,
+    "timeout": 60,
     "source": {
         "directories": [
             "src"
@@ -9,6 +9,8 @@
         "text": "build\/infection.log"
     },
     "mutators": {
-        "@default": true
+        "@removal": true,
+        "@return_value": true,
+        "@zero_iteration": true
     }
 }
