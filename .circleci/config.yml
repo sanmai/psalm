@@ -93,7 +93,7 @@ jobs:
           command: find build/logs/coverage-xml -type f -size +100M -print -delete
       - run:
           name: Mutation coverage testing
-          command: php -d memory_limit=4G vendor/bin/infection --coverage=build/logs --no-progress --only-covered --threads=2
+          command: php -d memory_limit=4G vendor/bin/infection --coverage=build/logs --only-covered --threads=2 --skip-initial-tests --no-progress 
   phar-build:
     executor: php-72
     steps:
