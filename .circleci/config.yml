@@ -68,7 +68,7 @@ jobs:
           at: /home/docker/project/
       - run:
           name: PHPUnit test with coverage
-          command: php -dextension=pcov.so vendor/bin/phpunit --log-junit build/phpunit/phpunit.xml --coverage-xml build/phpunit/coverage-xml --coverage-html build/phpunit/ --log-junit=build/phpunit/junit.xml
+          command: php -dextension=pcov.so vendor/bin/phpunit --log-junit build/phpunit/phpunit.xml --coverage-xml build/logs/coverage-xml --coverage-html build/phpunit/ --log-junit=build/logs/junit.xml
       - store_artifacts:
           path: build/phpunit
       - run:
@@ -89,8 +89,11 @@ jobs:
           name: Install infection
           command: composer require infection/infection:dev-master # Currently only master has https://github.com/infection/infection/pull/1106 merged.
       - run:
+          name: Remove extra large coverage reports
+          command: find build/logs/coverage-xml -type f -size +100M -print -delete
+      - run:
           name: Mutation coverage testing
-          command: php -d memory_limit=16G vendor/bin/infection --coverage=build/phpunit --no-progress --only-covered --threads=2
+          command: php -d memory_limit=4G vendor/bin/infection --coverage=build/logs --no-progress --only-covered --threads=2
   phar-build:
     executor: php-72
     steps:
